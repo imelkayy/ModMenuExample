@@ -15,8 +15,11 @@ Copy/move the `RuntimeSetting_Example` Struct and `SettingType_Example` Enums in
 
 In a `CCA`/`Singleton`, create an Array variable using this Struct. Here you can setup each setting by creating a new element in the array. `UUIDs` MUST be unique; they are used to store and retrieve your settings. To prevent collisions, I recommend using a unique suffix or prefix for your mod.
 
- * **Category**: ModName/SubCategory  |  Leaving just ModName will place your setting directly under the mod divider in the settings UI. Adding /`SubCategoryName` will add the setting into a subcategory under your mod category.
+ * **Category**: `ModName/SubCategory`  |  Leaving just ModName will place your setting directly under the mod divider in the settings UI. Adding /`SubCategoryName` will add the setting into a subcategory under your mod category.
  * **Description**: Index 0 - Description displayed by Mod Menu  |  Index 1 - Custom tooltip override
+ * **Min/Max**: Used for Integer, Float, Vector, and Classes Setting Types.
+     * **Integer, Float, Vector**: Index 0 - Minimum Value | Index 1 - Maximum Value
+     * **Classes**: Index 0 - Parent Class | Index 1 - Num Allowed Selections
 
 
 ## Packaging Your Settings
