@@ -32,16 +32,20 @@ This repository is setup to make Mod Menu integration as easy as possible. Befor
 - Open the newly moved CCA file, and navigate to the defaults tab.
 - Sort by modified properties only; you should see Advanced > Tags.
 - Change the tag at index 0 to `CCA_YOURMODNAME`. Copy this value with `CTRL+C`, since we'll be using it again in a moment.
+   - ![ShooterGameEditor_1qGAN3c1gQ](https://github.com/user-attachments/assets/c1feab1e-b46f-4e78-954f-9d362017648c)
 - Remove your `Modified Properties Only` filter, and configure the `IniSection` variable. Set this to the ini header that should be used when Mod Menu is not installed.
 - Save and compile the CCA.  
-![ShooterGameEditor_1qGAN3c1gQ](https://github.com/user-attachments/assets/c1feab1e-b46f-4e78-954f-9d362017648c)
+
 ![ShooterGameEditor_pS1mmQ5kuL](https://github.com/user-attachments/assets/365c8b60-d8b2-48c1-b9b1-93a811023c91)
 
 ## Step Six: Setup The Function Library
 - Open the `MMCommFunctions` library.
-- Open the `GetSettingValue` function, and change the `CCA_Example` name to the value of your CCA's tag.
+- Open the `GetCCA()` function, and change the `CCA_Example` name literal to the value of your CCA's tag.
+- Then, rename the function category name to incorporate your mod's name. This will make it much easier to ensure you're using the correct function!
+   - ![ShooterGameEditor_LP0OP2Aqy0](https://github.com/user-attachments/assets/c825b120-e04b-4e13-a42f-c370a25c5497)
 - Save and compile, then close the library.  
-![ShooterGameEditor_LGMcq7thQf](https://github.com/user-attachments/assets/9dc51b13-b24b-4963-bab9-c7760688cdf2)
+![ShooterGameEditor_qOQjSATYXh](https://github.com/user-attachments/assets/592809af-84b2-4594-a8e8-78b4673d97c5)
+
 
 # Settings
 
