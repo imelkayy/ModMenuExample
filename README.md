@@ -1,40 +1,74 @@
-# Mod Menu Communcation
+# Mod Menu Integration (v2)
 
-This repository serves as both an example on how to implement Mod Menu communication into your own mod, as well as a template for easy integration.
+This repository is setup to make Mod Menu integration as easy as possible. Before I walk you through my process, here're a couple important things to remember:
+- In order to keep references intact, ensure this repository is cloned into a file named `ModMenuExample`.
+- Utilize the `move` function to move all files in this repository into your project at once. This will maintain references and make the process much smoother!
 
-## Registering Your Mod
+# Step-By-Step
 
-Retrieve a reference to Mod Menu's CCA. The example files included provide a function utilizing Wildcard's `GetActorWithTag()` system, which acts as a more-efficient CustomActorList. Mod Menu's tag for this system is `CCA_ModMenu`. Create a new JSON object and add a `StringField` with the key `CCATag`; set this field to the Tag on your CCA (Located: `Actor/Advanced/Tags`). Using the reference to Mod Menu's CCA, use the `SendModData()` interface function from the `ModCommuncation_Interface` with the Key `AddMod` and this newly created JSON object.
-![image](https://github.com/imelkayy/ModMenuExample/assets/63310939/0ab6c266-ee33-4470-b486-e32c641a50a1)
+## Step One: Clone The Repository
+- This repository is setup like a mod, so clone it into `ShooterGame/Mods/ModMenuExample`.
+- With the kit open all files should be at the main-level, and not nested within any files.
+- Outside of the kit, files should be located within `ShooterGame/Mods/ModMenuExample/Content`  
+![ShooterGameEditor_NgfcZie0nb](https://github.com/user-attachments/assets/f9928bff-69e9-42b0-90e7-5ddaa7b816d0)
 
+## Step Two: Move The Files
+- Select all of the files within the `ModMenuExample` directory
+- Drag them into your mod, selecting the `move` option to move all files (this is **very important** because it **maintains references**, meaning it should almost be plug-and-play!)  
+![LzrQcb4hxn](https://github.com/user-attachments/assets/ba23aadd-5169-4477-9d8b-d9ea7fe3eb4e)
 
+## Step Three: Rename The Files
+- To ensure you don't accidentally reference another mod's copy of the communication files, I recommend renaming the files!
+- Optionally, you should move them into subfolders at this point to keep consistency with your project's organization.  
+![ShooterGameEditor_4ZgEYOw0UQ](https://github.com/user-attachments/assets/0f2bad48-d8f3-4536-917f-d2dd7c3796f8)
 
-## Creating Your Settings
+## Step Four: Add The CCA To Your MDA
+- Open your mod's ModDataAsset and search for the "ExtraWorldSingleSingletonActorClasses" array
+- Add a new element and set it to your newly renamed CCA
+- Save your ModDataAsset, and reset the PGD cache if necessary (this can be accomplished by restarting the kit, or opening a level not linked to your MDA/PGD and running PIE, then switching back)  
+![ShooterGameEditor_NiMdoTXlAz](https://github.com/user-attachments/assets/5c6afee7-a008-412e-be8d-f9f5c9d10f37)
 
-Copy/move the `RuntimeSetting_Example` Struct and `SettingType_Example` Enums into your mod. If you make a copy, ensure you change the `SettingType_Example` enum to your newly copied one.
+## Step Five: Setup The CCA
+- Open the newly moved CCA file, and navigate to the defaults tab.
+- Sort by modified properties only; you should see Advanced > Tags.
+- Change the tag at index 0 to `CCA_YOURMODNAME`. Copy this value with `CTRL+C`, since we'll be using it again in a moment.
+- Remove your `Modified Properties Only` filter, and configure the `IniSection` variable. Set this to the ini header that should be used when Mod Menu is not installed.
+- Save and compile the CCA.  
+![ShooterGameEditor_1qGAN3c1gQ](https://github.com/user-attachments/assets/c1feab1e-b46f-4e78-954f-9d362017648c)
+![ShooterGameEditor_pS1mmQ5kuL](https://github.com/user-attachments/assets/365c8b60-d8b2-48c1-b9b1-93a811023c91)
 
-In a `CCA`/`Singleton`, create an Array variable using this Struct. Here you can setup each setting by creating a new element in the array. `UUIDs` MUST be unique; they are used to store and retrieve your settings. To prevent collisions, I recommend using a unique suffix or prefix for your mod.
+## Step Six: Setup The Function Library
+- Open the `MMCommFunctions` library.
+- Open the `GetSettingValue` function, and change the `CCA_Example` name to the value of your CCA's tag.
+- Save and compile, then close the library.  
+![ShooterGameEditor_LGMcq7thQf](https://github.com/user-attachments/assets/9dc51b13-b24b-4963-bab9-c7760688cdf2)
 
- * **Category**: `ModName/SubCategory`  |  Leaving just ModName will place your setting directly under the mod divider in the settings UI. Adding /`SubCategoryName` will add the setting into a subcategory under your mod category.
- * **Description**: Index 0 - Description displayed by Mod Menu  |  Index 1 - Custom tooltip override
- * **Min/Max**: Used for Integer, Float, Vector, and Classes Setting Types.
-     * **Integer, Float, Vector**: Index 0 - Minimum Value | Index 1 - Maximum Value
-     * **Classes**: Index 0 - Parent Class | Index 1 - Num Allowed Selections
+# Settings
 
+## Creating
 
-## Packaging Your Settings
+Your mod's settings are stored in the `settings` array within the CCA. You can add new settings by adding to this array. Here are descriptions for each setting parameter:
 
-Setting Structs MUST match the struct in this repo. 
-To package your settings, implement the key `MMSettings` in the `RequestModData` function from the `ModCommunication_Interace`. Create a new JSON Object and a `Keys` local String array variable. `ForEach` element in your `Settings` array, add the `UUID` to the `Keys` array and `SetStructField` on the JSON object with the `UUID` as the key and Settings element as the value.
+ - **Category:** (Name) the category your setting belongs to. Standard: ``ModName/Category``. NOTE: The category is used to sort by-mod, so this standard is critical!
+   - Spaces ARE allowed in both the mod & category name.
+   - Sub-Sub Categories are not currently supported.
+- **UUID:** (Name) the Unique ID of your setting.
+   - Standard: ``ModPrefix_SettingName``
+- **Type:** (Enum) the TYPE of setting that your setting is.
+- **Name:** (String) the name of the setting, displayed to the player.
+- **Description:** (String) the custom description of your setting
+   - Index 0 == Setting Description
+   - Index 1 == Custom Tooltip (optional)
+- **Value:** (String) the DEFAULT value of your setting. Will NOT be overridden on preexisting saves if changed later.
+- **MinMax:** (String[]) the minimum and maximum allowed values that can be input.
+   - Required for numerical types (`Float`, `Int`): Index 0 == min, Index 1 == max
+   - Vector format is: `x,y,z`: Index 0 == min, Index 1 == max
+   - Classes utilizes this for: Index 0 == Parent Classpath, Index 1 == Num Allowed Selections
 
-<img width="1000" alt="parsecd_71iZOg4lTf" src="https://github.com/imelkayy/ModMenuExample/assets/63310939/9065b447-e624-41d6-9627-7f1c58f727b0">
+## Loading
 
-
-## Retrieving Your Settings
-
-Located within the `MMCommFunctions` library is `GetSettingValue()`. This function implements Mod Menu's retrieval API, and includes a fall-back to `CCA_Example` if Mod Menu isn't installed.
-<img width="1000" alt="parsecd_xPsB0oksTP" src="https://github.com/imelkayy/ModMenuExample/assets/63310939/64d760aa-540c-41ff-a6ea-ca9bf8343095">
-
-The GetSetting() interface function runs the following on `CCA_Example`. It provides functionality for ini to be used when Mod Menu isn't present, as well as defaulting to your `Settings` array when an ini isn't loaded.
-<img width="1000" alt="parsecd_AKuWdxRkR1" src="https://github.com/imelkayy/ModMenuExample/assets/63310939/a786f85f-fec8-4403-9d56-ceec12a6c707">
+In order to load settings, you need to use the `GetSettingValue()` function. This function only works server-side, as Mod Menu does not handle replication. Simply pass in the name of your setting, and then cast the `string` output into the correct type. From here, you can use the value as you wish; I recommend storing it within a variable for later use.
+- If storing settings as variables, you will need to manually handle updating them if/when mod menu dispatches an update notification. The CCA template automatically handles receiving this in the `LoadSettings()` function; using this you can inform whatever actors of yours need to be notified of an update and have themn refetch.  
+Here's an example of how I load settings in one of my mods:
+![image](https://github.com/user-attachments/assets/208d06c5-c867-4ee6-a163-17dae1834f1c)
 
